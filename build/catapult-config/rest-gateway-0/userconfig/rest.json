@@ -1,0 +1,56 @@
+{
+  "network": {
+    "name": "mijinTest",
+    "description": "catapult development network"
+  },
+
+  "port": 3000,
+  "crossDomainHttpMethods": ["GET", "POST", "PUT", "OPTIONS"],
+  "clientPrivateKey": "FABED09A5249E1AFB5F61659EF66F301FE801340700379E39034AF7DE636C57F",
+  "extensions": ["aggregate", "lock", "multisig", "namespace", "transfer"],
+  "db": {
+    "url": "mongodb://db:27017/",
+    "name": "catapult",
+    "pageSizeMin": 10,
+    "pageSizeMax": 100,
+    "pageSizeStep": 25,
+    "maxConnectionAttempts": 5,
+    "baseRetryDelay": 500
+  },
+
+  "apiNode": {
+    "host": "peer-node-0",
+    "port": 7900,
+    "publicKey": "1DFE13BB4DCF14A030A6CB2CE73E8D0723D42E74D2E25124E05B9D1ADFF46295"
+  },
+
+  "websocket": {
+    "mq": {
+      "host": "peer-node-0",
+      "port": 7902,
+      "monitorInterval": 500,
+      "connectTimeout": 10000,
+      "monitorLoggingThrottle": 60000
+    },
+    "allowOptionalAddress": true
+  },
+
+  "logging": {
+    "console": {
+      "colorize": true,
+      "level": "verbose",
+      "handleExceptions": true,
+      "prettyPrint": true,
+      "timestamp": true
+    },
+    "file": {
+      "level": "verbose",
+      "handleExceptions": true,
+      "prettyPrint": true,
+      "timestamp": true,
+      "filename": "catapult-rest.log",
+      "maxsize": 20971520,
+      "maxFiles": 100
+    }
+  }
+}

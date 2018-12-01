@@ -1,0 +1,48 @@
+version: '3'
+services:
+  db:
+    image: mongo
+    command: bash -c "mongod --dbpath=/dbdata --bind_ip=db"
+    stop_signal: SIGINT
+    volumes:
+      - ./data/mongo:/dbdata:rw
+      - ./bin/bash:/bin-mount
+
+  init-db:
+    image: mongo
+    command: bash -c "/bin/bash /userconfig/mongors.sh"
+    volumes:
+      - ./data/mongo:/dbdata:rw
+      - ./static-config/mongo/:/userconfig/:ro
+      - ./bin/bash:/bin-mount
+    depends_on:
+      - db
+  rest-gateway:
+    image: techbureau/catapult-rest-server:1.0.7
+    command: ash -c "npm start resources/rest.json /userconfig/rest.json"
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./build/catapult-config/rest-gateway-0/userconfig/:/userconfig/
+      - ./bin/ash:/bin-mount
+    depends_on:
+      - init-db
+  peer-node-api:
+    build: dockerfiles/catapult
+    command: bash -c "/bin/bash /userconfig/seed.sh && /bin/bash /userconfig/startServer.sh"
+    stop_signal: SIGINT
+    ports:
+      - 7902:7902
+      - 7900:7900
+      - 7901:7901
+    volumes:
+      - ./build/catapult-config/peer-node-0/userconfig/resources/:/userconfig/resources/
+      - ./dockerfiles/catapult/userconfig/:/userconfig:rw
+      - ./build/nemesis:/nemesis
+      - ./data/peer-node-0:/data:rw
+      - ./bin/bash:/bin-mount
+  block-explorer:
+    image: techbureau/catapult-block-explorer
+    command: ['python', '-m', 'http.server', '8000']
+    ports:
+      - '8000:8000'
